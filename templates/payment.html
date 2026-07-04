@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Instructions | Nexus Analytical Labs{% endblock %}
+
+{% block content %}
+<section class="payment-hero">
+  <div class="success-mark" aria-hidden="true">✓</div>
+  <h1>Test request received</h1>
+  <p>Your peptide testing request has been received. Complete payment proof to begin the analysis workflow.</p>
+</section>
+
+<section class="section payment-layout">
+  <article class="summary-panel">
+    <div class="panel-heading">
+      <h2>Request summary</h2>
+      <span>{{ record.status }}</span>
+    </div>
+    <div class="summary-metrics">
+      <div>
+        <small>Request Number</small>
+        <strong>{{ record.request_number }}</strong>
+      </div>
+      <div>
+        <small>Total Due</small>
+        <strong>${{ "%.2f"|format(record.total) }} USD</strong>
+      </div>
+      <div>
+        <small>Sample</small>
+        <strong>{{ record.compound_name }}</strong>
+      </div>
+    </div>
+    <div class="summary-columns">
+      <div>
+        <h3>Selected tests</h3>
+        <ul class="test-list">
+          {% for test in record.selected_tests %}
+          <li>
+            <span>{{ test.name }}</span>
+            <b>${{ "%.2f"|format(test.price) }}</b>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div>
+        <h3>Customer and sample details</h3>
+        <dl class="detail-list">
+          <dt>Name</dt><dd>{{ record.client_name }}</dd>
+          <dt>Company</dt><dd>{{ record.company or "N/A" }}</dd>
+          <dt>Email</dt><dd>{{ record.email }}</dd>
+          <dt>Phone</dt><dd>{{ record.phone or "N/A" }}</dd>
+          <dt>Lot / Batch</dt><dd>{{ record.lot_batch }}</dd>
+          <dt>Quantity</dt><dd>{{ record.quantity }}</dd>
+        </dl>
+      </div>
+    </div>
+  </article>
+
+  <article class="bitcoin-panel">
+    <div class="panel-heading">
+      <h2>Complete payment via Bitcoin</h2>
+      <span>No checkout required</span>
+    </div>
+    <div class="bitcoin-grid">
+      <div class="qr-frame">
+        <img src="{{ url_for('payment_qr', request_number=record.request_number) }}" alt="Bitcoin payment QR code">
+      </div>
+      <div class="wallet-details">
+        <h3>Scan to pay</h3>
+        <p>Send payment to the Bitcoin wallet below. Clients may also pay by phone.</p>
+        {% if not bitcoin_wallet_is_configured %}
+        <div class="wallet-warning" role="alert">Wallet address is pending. Set <strong>NEXUS_BTC_WALLET</strong> before using this page live.</div>
+        {% endif %}
+        <label class="wallet-box">
+          <span>Wallet Address</span>
+          <input value="{{ bitcoin_wallet_address }}" readonly data-wallet-address>
+          <button type="button" data-copy-wallet>Copy</button>
+        </label>
+        <div class="amount-due">
+          <span>Amount Due</span>
+          <strong>${{ "%.2f"|format(record.total) }} USD</strong>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="proof-panel">
+    <div>
+      <h2>Send proof of payment to {{ sales_email }}</h2>
+      <p>After proof is confirmed, we will email detailed shipping instructions for how to ship your product to Nexus Analytical Labs. The shipping address will be provided after payment proof is received.</p>
+    </div>
+    <a class="primary-button" href="{{ proof_mailto }}">Email Proof</a>
+  </article>
+
+  <div class="payment-actions">
+    <a class="secondary-button" href="{{ url_for('index') }}#request">Start Another Request</a>
+    <a class="secondary-link" href="mailto:{{ sales_email }}">Questions? {{ sales_email }}</a>
+  </div>
+</section>
+<script src="{{ url_for('static', filename='js/payment.js') }}"></script>
+{% endblock %}

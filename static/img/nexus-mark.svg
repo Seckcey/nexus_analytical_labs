@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72" role="img" aria-label="Nexus Analytical Labs mark">
+  <rect width="72" height="72" rx="9" fill="#ffffff"/>
+  <path d="M14 58V14h10l24 29V14h10v44H48L24 29v29H14z" fill="#0b1f3a"/>
+  <path d="M14 58h14l12-14-8-10z" fill="#0f8b8d"/>
+  <path d="M14 14h10l34 44H48z" fill="#12365f" opacity=".16"/>
+</svg>

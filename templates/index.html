@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}Peptide Testing | Nexus Analytical Labs{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <img src="{{ url_for('static', filename='img/lab-hero.png') }}" alt="Bright analytical chemistry laboratory with HPLC instruments" class="hero-image">
+  <div class="hero-content">
+    <h1>Peptide testing made clear, fast, and defensible</h1>
+    <p class="hero-copy">Independent HPLC-UV peptide analysis with identity confirmation and optional safety screens for endotoxins, heavy metals, and residual solvents.</p>
+    <div class="hero-actions">
+      <a href="#request" class="primary-button">Start Test Request</a>
+      <span class="base-price">Base peptide analysis: <strong>$75</strong></span>
+    </div>
+    <div class="trust-row" aria-label="Laboratory qualities">
+      <span>Independent results</span>
+      <span>Professional COAs</span>
+      <span>Austin, Texas</span>
+    </div>
+  </div>
+  <div class="chromatogram-panel" aria-hidden="true">
+    <span class="chart-label">HPLC-UV Chromatogram</span>
+    <svg viewBox="0 0 520 190" role="img" aria-label="Stylized chromatogram line">
+      <path class="grid-line" d="M24 154H500M24 115H500M24 76H500M24 37H500"/>
+      <path class="axis-line" d="M24 18V166H500"/>
+      <path class="trace-line" d="M24 150 C42 151 54 148 66 151 C82 153 94 149 108 151 C126 153 138 146 154 150 C174 154 188 151 204 151 C224 151 238 148 252 151 C270 153 280 150 294 151 C310 152 322 147 332 151 L346 151 C351 148 356 133 360 90 C363 58 366 33 371 30 C376 35 379 72 382 112 C385 139 390 149 398 151 C420 152 446 150 474 151 C486 151 494 149 500 150"/>
+    </svg>
+  </div>
+</section>
+
+<section class="section intro-band" id="testing">
+  <div>
+    <h2>Built for a simple customer workflow</h2>
+    <p>Choose the base peptide analysis, add optional screens, submit the details, and receive a clear payment page. Once proof of payment is received, Nexus will send shipping instructions.</p>
+  </div>
+  <div class="method-list">
+    <span>HPLC-UV Purity</span>
+    <span>Identity Confirmation</span>
+    <span>Optional Add-ons</span>
+  </div>
+</section>
+
+<section class="section request-section" id="request">
+  <div class="section-heading">
+    <h2>Submit a peptide test request</h2>
+    <p>Pricing updates instantly. No checkout is required because clients may pay by phone or Bitcoin after submitting the request.</p>
+  </div>
+
+  {% if errors %}
+  <div class="error-summary" role="alert">
+    <strong>Please check the highlighted fields.</strong>
+    <span>Required sample and contact details are needed before we can create the request.</span>
+  </div>
+  {% endif %}
+
+  <form class="request-shell" action="{{ url_for('submit_request') }}" method="post" data-pricing-form>
+    <div class="form-grid">
+      <label>
+        <span>Client Name <b>*</b></span>
+        <input name="client_name" value="{{ form_data.get('client_name', '') }}" autocomplete="name" required>
+        {% if errors.get("client_name") %}<em>{{ errors["client_name"] }}</em>{% endif %}
+      </label>
+      <label>
+        <span>Company / Organization</span>
+        <input name="company" value="{{ form_data.get('company', '') }}" autocomplete="organization">
+      </label>
+      <label>
+        <span>Email Address <b>*</b></span>
+        <input name="email" type="email" value="{{ form_data.get('email', '') }}" autocomplete="email" required>
+        {% if errors.get("email") %}<em>{{ errors["email"] }}</em>{% endif %}
+      </label>
+      <label>
+        <span>Phone Number</span>
+        <input name="phone" value="{{ form_data.get('phone', '') }}" autocomplete="tel" placeholder="(512) 555-1234">
+      </label>
+      <label>
+        <span>Compound / Sample Name <b>*</b></span>
+        <input name="compound_name" value="{{ form_data.get('compound_name', '') }}" placeholder="e.g., BPC-157" required>
+        {% if errors.get("compound_name") %}<em>{{ errors["compound_name"] }}</em>{% endif %}
+      </label>
+      <label>
+        <span>Lot / Batch Number <b>*</b></span>
+        <input name="lot_batch" value="{{ form_data.get('lot_batch', '') }}" placeholder="e.g., LOT12345" required>
+        {% if errors.get("lot_batch") %}<em>{{ errors["lot_batch"] }}</em>{% endif %}
+      </label>
+      <label>
+        <span>Quantity / Presentation <b>*</b></span>
+        <input name="quantity" value="{{ form_data.get('quantity', '') }}" placeholder="e.g., 10 mg lyophilized powder" required>
+        {% if errors.get("quantity") %}<em>{{ errors["quantity"] }}</em>{% endif %}
+      </label>
+      <label>
+        <span>Intended Use</span>
+        <select name="intended_use">
+          {% set selected_use = form_data.get('intended_use', '') %}
+          <option value="" {% if not selected_use %}selected{% endif %}>Select an option</option>
+          <option value="Research material" {% if selected_use == "Research material" %}selected{% endif %}>Research material</option>
+          <option value="Vendor QA/QC" {% if selected_use == "Vendor QA/QC" %}selected{% endif %}>Vendor QA/QC</option>
+          <option value="Internal verification" {% if selected_use == "Internal verification" %}selected{% endif %}>Internal verification</option>
+          <option value="Other" {% if selected_use == "Other" %}selected{% endif %}>Other</option>
+        </select>
+      </label>
+      <label class="wide-field">
+        <span>Notes / Additional Information</span>
+        <textarea name="notes" rows="5" placeholder="Share concentration, expected identity, storage notes, or any special handling details.">{{ form_data.get('notes', '') }}</textarea>
+      </label>
+    </div>
+
+    <aside class="pricing-panel" id="pricing" aria-label="Select tests and pricing">
+      <h3>Select tests and pricing</h3>
+      <div class="price-row fixed">
+        <div>
+          <strong>{{ base_test.name }}</strong>
+          <span>{{ base_test.description }}</span>
+        </div>
+        <b>${{ base_test.price }}</b>
+      </div>
+
+      {% set selected_addons = form_data.get('add_ons', []) %}
+      {% for test in add_on_tests %}
+      <label class="price-row option-row">
+        <input type="checkbox" name="add_ons" value="{{ test.key }}" data-addon data-price="{{ test.price }}" {% if test.key in selected_addons %}checked{% endif %}>
+        <span>
+          <strong>{{ test.name }}</strong>
+          <small>{{ test.description }}</small>
+        </span>
+        <b>+${{ test.price }}</b>
+      </label>
+      {% endfor %}
+
+      <div class="total-row">
+        <span>Total</span>
+        <strong data-total data-base-price="{{ base_test.price }}">${{ base_test.price }}</strong>
+      </div>
+      <p class="pricing-note">After submitting, you will receive a payment page with Bitcoin details and proof-of-payment instructions.</p>
+      <button class="primary-button full-button" type="submit">Submit Test Request</button>
+    </aside>
+  </form>
+</section>
+
+<section class="section process-section" id="process">
+  <div class="section-heading centered">
+    <h2>The simple 3-step process</h2>
+    <p>Transparent pricing first, shipping details after payment proof.</p>
+  </div>
+  <div class="process-grid">
+    <article>
+      <span>1</span>
+      <h3>Submit your request</h3>
+      <p>Complete the test request form with your sample details and selected add-ons.</p>
+    </article>
+    <article>
+      <span>2</span>
+      <h3>Send payment proof</h3>
+      <p>Use the Bitcoin QR page or pay by phone, then email proof to {{ sales_email }}.</p>
+    </article>
+    <article>
+      <span>3</span>
+      <h3>Receive shipping instructions</h3>
+      <p>Once payment proof is confirmed, Nexus emails detailed product shipping instructions.</p>
+    </article>
+  </div>
+</section>
+
+<section class="section included-section">
+  <div class="section-heading centered">
+    <h2>What customers can request</h2>
+  </div>
+  <div class="included-grid">
+    <article>
+      <h3>HPLC-UV Purity</h3>
+      <p>Chromatographic purity percentage with clean COA-ready reporting.</p>
+    </article>
+    <article>
+      <h3>Identity Confirmation</h3>
+      <p>Identity support for submitted peptide compounds and batches.</p>
+    </article>
+    <article>
+      <h3>Endotoxin Screen</h3>
+      <p>Optional endotoxin add-on for customers needing additional screening.</p>
+    </article>
+    <article>
+      <h3>Heavy Metals</h3>
+      <p>Optional metals screen for priority analytes and quality review.</p>
+    </article>
+    <article>
+      <h3>Residual Solvents</h3>
+      <p>Optional residual solvent screen for manufacturing-related review.</p>
+    </article>
+  </div>
+</section>
+<script src="{{ url_for('static', filename='js/request.js') }}"></script>
+{% endblock %}
