@@ -12,14 +12,23 @@ class AnalyticsContractTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.javascript = JS_PATH.read_text(encoding="utf-8")
 
-    def test_manual_tracker_configuration(self) -> None:
-        self.assertIn("28a7129d-766b-4c54-a979-9a234e6be68d", self.javascript)
-        self.assertIn('script.setAttribute("data-auto-track", "false")', self.javascript)
-        self.assertIn('script.setAttribute("data-before-send", "nexusAnalyticsBeforeSend")', self.javascript)
+    def test_explicit_consent_and_privacy_settings(self) -> None:
+        self.assertIn('GA4_MEASUREMENT_ID = "G-KYJLM0BL40"', self.javascript)
+        for setting in (
+            "analytics_storage: CONSENT_DENIED",
+            "ad_storage: CONSENT_DENIED",
+            "ad_user_data: CONSENT_DENIED",
+            "ad_personalization: CONSENT_DENIED",
+            "allow_google_signals: false",
+            "allow_ad_personalization_signals: false",
+            "send_page_view: false",
+            "consentState !== CONSENT_GRANTED",
+        ):
+            self.assertIn(setting, self.javascript)
 
     def test_uses_only_sanitized_paths(self) -> None:
-        self.assertIn('url: "/payment"', self.javascript)
-        self.assertIn('url: "/"', self.javascript)
+        self.assertIn('path: "/payment"', self.javascript)
+        self.assertIn('path: "/"', self.javascript)
         self.assertNotIn("window.location.href", self.javascript)
         self.assertNotIn("window.location.search", self.javascript)
         self.assertNotIn("window.location.hash", self.javascript)
@@ -46,8 +55,16 @@ class AnalyticsContractTests(unittest.TestCase):
             "payment_proof_email_clicked",
         ):
             self.assertIn(event_name, self.javascript)
-        self.assertNotIn("umami.identify", self.javascript)
-        self.assertIn("if (payload.data || payload.referrer) return false;", self.javascript)
+
+    def test_legacy_tracker_is_completely_removed(self) -> None:
+        legacy_name = "um" + "ami"
+        for token in (
+            ".".join(("analytics", "8westventures", "com")),
+            "window." + legacy_name,
+            legacy_name + ".track",
+            "data-" + "website-id",
+        ):
+            self.assertNotIn(token, self.javascript)
 
 
 if __name__ == "__main__":

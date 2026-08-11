@@ -58,15 +58,23 @@
   <article class="bitcoin-panel">
     <div class="panel-heading">
       <h2>Complete payment via Bitcoin</h2>
-      <span>No checkout required</span>
+      <span>Secure checkout available</span>
+    </div>
+    <div class="btcpay-callout">
+      <div>
+        <h3>Pay securely with BTCPay</h3>
+        <p>Select the tests listed in your request summary and confirm the cart total matches <strong>${{ "%.2f"|format(record.total) }} USD</strong>. BTCPay will generate the exact BTC amount, a unique address, and a QR code.</p>
+        <p class="network-note"><strong>Bitcoin network only.</strong> Do not send Lightning or another cryptocurrency.</p>
+      </div>
+      <a class="primary-button" href="{{ btcpay_pos_url }}" target="_blank" rel="noopener">Open Secure BTCPay Checkout</a>
     </div>
     <div class="bitcoin-grid">
       <div class="qr-frame">
         <img src="{{ url_for('payment_qr', request_number=record.request_number) }}" alt="Bitcoin payment QR code">
       </div>
       <div class="wallet-details">
-        <h3>Scan to pay</h3>
-        <p>Send payment to the Bitcoin wallet below. Clients may also pay by phone.</p>
+        <h3>Manual wallet fallback</h3>
+        <p>Use the verified Bitcoin wallet below if the hosted checkout is unavailable. Contact us to confirm the exact BTC amount before sending.</p>
         {% if not bitcoin_wallet_is_configured %}
         <div class="wallet-warning" role="alert">Wallet address is pending. Set <strong>NEXUS_BTC_WALLET</strong> before using this page live.</div>
         {% endif %}

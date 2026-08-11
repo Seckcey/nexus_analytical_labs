@@ -20,13 +20,17 @@ DATA_FILE = Path(os.getenv("NEXUS_REQUEST_LOG", BASE_DIR / "data" / "test_reques
 SALES_EMAIL = os.getenv("NEXUS_SALES_EMAIL", "sales@nexusanalyticallabs.com")
 BITCOIN_WALLET_ADDRESS = os.getenv("NEXUS_BTC_WALLET", "REPLACE_WITH_NEXUS_BTC_WALLET")
 BITCOIN_WALLET_IS_CONFIGURED = not BITCOIN_WALLET_ADDRESS.startswith("REPLACE_WITH")
+BTCPAY_POS_URL = os.getenv(
+    "NEXUS_BTCPAY_POS_URL",
+    "https://btcpay.8westventures.com/apps/36H9XAKeKdJyAwUGaUis2wKRXu3U/pos",
+)
 
 BASE_TEST = {
     "key": "base",
     "name": "Base HPLC-UV Peptide Analysis",
     "short_name": "Base HPLC-UV Analysis",
     "description": "Chromatographic purity with identity confirmation.",
-    "price": 75,
+    "price": 25,
 }
 
 ADD_ON_TESTS = [
@@ -104,6 +108,7 @@ def create_app() -> Flask:
             sales_email=SALES_EMAIL,
             bitcoin_wallet_address=BITCOIN_WALLET_ADDRESS,
             bitcoin_wallet_is_configured=BITCOIN_WALLET_IS_CONFIGURED,
+            btcpay_pos_url=BTCPAY_POS_URL,
             proof_mailto=build_proof_mailto(record),
         )
 

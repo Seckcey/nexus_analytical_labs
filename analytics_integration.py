@@ -3,7 +3,7 @@ from __future__ import annotations
 from flask import Flask, Response
 
 
-SCRIPT_TAG = '<script defer src="/static/js/analytics.js"></script>'
+SCRIPT_TAG = '<script defer src="/static/js/analytics.js?v=ga4-1"></script>'
 
 
 def install_analytics(app: Flask) -> None:
