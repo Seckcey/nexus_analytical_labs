@@ -77,6 +77,17 @@ def create_app() -> Flask:
             errors={},
         )
 
+    @app.get("/sitemap.xml")
+    def sitemap() -> Response:
+        return Response(
+            """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://nexusanalyticallabs.com/</loc></url>
+</urlset>
+""",
+            mimetype="application/xml",
+        )
+
     @app.post("/submit")
     def submit_request() -> Response | str:
         form_data = normalize_form_data(request.form)
