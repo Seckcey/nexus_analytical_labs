@@ -672,6 +672,32 @@ label em {
   font-weight: 900;
 }
 
+.btcpay-callout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+  padding: 20px;
+  background: var(--wash);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.btcpay-callout h3 {
+  margin-bottom: 6px;
+  color: var(--teal-dark);
+}
+
+.btcpay-callout p {
+  margin: 0;
+}
+
+.btcpay-callout .network-note {
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
+
 .summary-metrics {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -872,6 +898,11 @@ label em {
 }
 
 @media (max-width: 780px) {
+  .btcpay-callout {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
   .site-header {
     position: static;
     align-items: flex-start;

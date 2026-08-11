@@ -10,7 +10,7 @@
     <p class="hero-copy">Independent HPLC-UV peptide analysis with identity confirmation and optional safety screens for endotoxins, heavy metals, and residual solvents.</p>
     <div class="hero-actions">
       <a href="#request" class="primary-button">Start Test Request</a>
-      <span class="base-price">Base peptide analysis: <strong>$75</strong></span>
+      <span class="base-price">Base peptide analysis: <strong>${{ base_test.price }}</strong></span>
     </div>
     <div class="trust-row" aria-label="Laboratory qualities">
       <span>Independent results</span>
@@ -43,7 +43,7 @@
 <section class="section request-section" id="request">
   <div class="section-heading">
     <h2>Submit a peptide test request</h2>
-    <p>Pricing updates instantly. No checkout is required because clients may pay by phone or Bitcoin after submitting the request.</p>
+    <p>Pricing updates instantly. A secure BTCPay checkout and verified manual wallet are provided after submitting the request.</p>
   </div>
 
   {% if errors %}
@@ -131,7 +131,7 @@
         <span>Total</span>
         <strong data-total data-base-price="{{ base_test.price }}">${{ base_test.price }}</strong>
       </div>
-      <p class="pricing-note">After submitting, you will receive a payment page with Bitcoin details and proof-of-payment instructions.</p>
+      <p class="pricing-note">After submitting, you will receive a payment page with secure BTCPay checkout, verified wallet details, and proof-of-payment instructions.</p>
       <button class="primary-button full-button" type="submit">Submit Test Request</button>
     </aside>
   </form>
@@ -150,8 +150,8 @@
     </article>
     <article>
       <span>2</span>
-      <h3>Send payment proof</h3>
-      <p>Use the Bitcoin QR page or pay by phone, then email proof to {{ sales_email }}.</p>
+      <h3>Pay with Bitcoin</h3>
+      <p>Use the secure BTCPay checkout or verified manual wallet, then email proof to {{ sales_email }}.</p>
     </article>
     <article>
       <span>3</span>
